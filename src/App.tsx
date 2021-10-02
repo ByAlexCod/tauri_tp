@@ -1,20 +1,11 @@
 import React from "react";
 
 import "./App.css";
-import { FlightModel } from "./models/FlightModel";
-// import "bootstrap/dist/css/bootstrap.min.css";
-import Editor, {
-  DiffEditor,
-  useMonaco,
-  loader,
-  BeforeMount,
-} from "@monaco-editor/react";
-// import * as fs from 'fs';
-import { tauri, fs, event } from "@tauri-apps/api";
+import Editor from "@monaco-editor/react";
+import { fs, event } from "@tauri-apps/api";
 import {
   getCurrent,
   WebviewWindow,
-  WebviewWindowHandle,
 } from "@tauri-apps/api/window";
 import { homeDir } from "@tauri-apps/api/path";
 
@@ -26,7 +17,6 @@ type fileType = {
 };
 
 interface State {
-  flights: FlightModel[];
   files: fileType[];
   pathValue: string;
   monacoValue?: string;
@@ -37,7 +27,6 @@ export default class App extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
     this.state = {
-      flights: [],
       files: [],
       hideExplore: false,
       pathValue: "",
@@ -64,8 +53,6 @@ export default class App extends React.Component<{}, State> {
   }
 
   async read_directory(path: string) {
-    console.log(path);
-
     let filesComputed: fileType[] = [];
 
     try {
@@ -92,8 +79,6 @@ export default class App extends React.Component<{}, State> {
         }
       }
 
-      console.log(filesComputed);
-
       return filesComputed;
     } catch (e) {
       return [];
@@ -117,7 +102,6 @@ export default class App extends React.Component<{}, State> {
     });
 
     setTimeout(async () => {
-
       webview1.emit("show_file_only", file_content.path);
 
     }, 2000);
