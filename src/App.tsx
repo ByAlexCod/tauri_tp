@@ -38,6 +38,7 @@ export default class App extends React.Component<{}, State> {
       });
     });
   }
+  
   async componentDidMount() {
     this.setState({ pathValue: await homeDir() });
     let r = await this.read_directory(await homeDir());
@@ -52,6 +53,11 @@ export default class App extends React.Component<{}, State> {
     this.forceUpdate();
   }
 
+  /**
+   * Lit le contenu d'un dossier et le converti en filetype
+   * @param path Le chemin du dossier à lire
+   * @returns une liste de filetype
+   */
   async read_directory(path: string) {
     let filesComputed: fileType[] = [];
 
@@ -85,6 +91,10 @@ export default class App extends React.Component<{}, State> {
     }
   }
 
+  /**
+   * Parametrage de Monaco
+   * @param monaco Value of the editor
+   */
   handleEditorWillMount(monaco: any) {
 
     monaco.languages.typescript.typescriptDefaults.setCompilerOptions({
@@ -95,18 +105,27 @@ export default class App extends React.Component<{}, State> {
     monaco.languages.typescript.javascriptDefaults.setEagerModelSync(true);
   }
 
-  openInNewWindow(file_content: fileType) {
+  /**
+   * Ouvre un fichier dans une nouvelle fenêtre
+   * @param file Le fichier à ouvrir dans une nouvelle fenêtre
+   */
+  openInNewWindow(file: fileType) {
 
-    let webview1 = new WebviewWindow(file_content.path, {
+    let webview1 = new WebviewWindow(file.path, {
       url: "public/index.html",
     });
 
     setTimeout(async () => {
-      webview1.emit("show_file_only", file_content.path);
+      webview1.emit("show_file_only", file.path);
 
     }, 2000);
   }
 
+  /**
+   * Render of the directory list
+   * @param files Liste des fichiers parents
+   * @returns Un element TSX qui contient la liste des fichiers
+   */
   renderDirectoryList(files: fileType[]) {
     return files.map((file) => {
       if (file.is_file) {
@@ -171,7 +190,6 @@ export default class App extends React.Component<{}, State> {
           <Editor
             height="100vh"
             beforeMount={this.handleEditorWillMount}
-            // style={{width: "70%"}}
             language="typescript"
             theme="vs-dark"
             defaultValue="// TypeScript code goes here"
